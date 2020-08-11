@@ -23,9 +23,9 @@ Wrap a single page react application with the AuthCodeProvider component to easi
 
 AuthCodeProvider can also be added to indivual pages or react components to only require authentication for particular areas of an application.
 
-A set of functions included in AuthCodeFunctions can also be used to iniate flows, get tokens, or sign requests.
+A set of functions included in AuthCodeFunctions can also be used to initiate flows, get tokens, or sign requests.
 
-Also includes Refresh token flow, and token managment and logout flow.
+Also includes Refresh token flow, and token management and logout flow.
 
 
 ## Install
@@ -69,7 +69,7 @@ class Example extends Component {
 
 See the [Example](./example) for an application of this component. This showcases a few different use cases, and you can see this in action whilst hooked up to a test Auth0 server.
 
-Build the Example with `npm install` and then `npm start` to start the development server at [http://loclahost:3000](http://loclahost:3000).
+Build the Example with `npm install` and then `npm start` to start the development server at [http://localhost:3000](http://localhost:3000).
 
 Or view the online example at [https://darylbuckle.github.io/react-oauth2-authcode-provider](https://darylbuckle.github.io/react-oauth2-authcode-provider).
 
@@ -80,7 +80,7 @@ Or view the online example at [https://darylbuckle.github.io/react-oauth2-authco
 
 | Property | Type | Default | Mandatory | Description |
 | -------- |------| --------| ----------| ------------|
-|    authenticationProps | AuthenticationProperties  |  | true | An instance of the AuthCodeAuthentication class. This contains properties needed to for the authentication flow. |
+|    authenticationProps | AuthCodeProps  |  | true | An instance of the AuthCodeAuthentication class. This contains properties needed to for the authentication flow. |
 |    authenticationRequired | bool  | true | false | A prop used to toggle whether authentication is required. If false children will be rendered. If true, children will only be rendered when authenticated. Changing from false to true can be used to start the authentication flow. |
 |    doLogout | bool  | false  | false | A prop used to begin the logout flow. Changing from false to true can be used to start the logout flow. |
 |    returnTo | string  | *current path*  | false | Once a token has been retrieved this is the path to redirect back to. If not set it will redirect back to the current path. |
@@ -143,7 +143,7 @@ The following functions can be imported from AuthCodeFunctions.
 |    parseJwt  |  string | Decode Jwt to json string |
 
 
-
+<br/>
 
 ## License
 
