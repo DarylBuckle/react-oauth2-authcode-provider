@@ -1,9 +1,14 @@
 import Cookies from 'universal-cookie'
-import AuthCodeAuthenticationProperties from './AuthCodeAuthenticationProperties'
+// eslint-disable-next-line no-unused-vars
+import AuthCodeProps from './AuthCodeProps'
 
 const cookies = new Cookies()
 const crypto = require('crypto')
 
+/**
+ * Returns true if there is a an access_token or refresh_token cookie present
+ * (IE. authorization has been completed)
+ */
 export function isLoggedIn(storagePrefix: string = ''): boolean {
   if (hasRefreshToken(storagePrefix)) {
     return true
@@ -13,6 +18,9 @@ export function isLoggedIn(storagePrefix: string = ''): boolean {
   return false
 }
 
+/**
+ * Determines if the current access_token is still valid (2 minute leeway)
+ */
 export function hasTokenExpired(storagePrefix: string = ''): boolean {
   let tokenExpired: boolean = false
   const accessTokenExpiry: any = localStorage.getItem(
@@ -28,24 +36,59 @@ export function hasTokenExpired(storagePrefix: string = ''): boolean {
   return tokenExpired
 }
 
+/**
+ * Returns true if there is an access token cookie present
+ */
 export function hasAccessToken(storagePrefix: string = ''): boolean {
   return !!accessToken(storagePrefix)
 }
 
+/**
+ * Returns the access_token which is saved as a cookie
+ */
 export function accessToken(storagePrefix: string = ''): string {
   return cookies.get(storagePrefix + 'access_token')
 }
 
+/**
+ * Returns true if there is a refresh token cookie present
+ */
 export function hasRefreshToken(storagePrefix: string = ''): boolean {
   return !!refreshToken(storagePrefix)
 }
 
+/**
+ * Returns the refresh_token which is saved as a cookie
+ */
 export function refreshToken(storagePrefix: string = ''): string {
   return cookies.get(storagePrefix + 'refresh_token')
 }
 
-export function doAuthorisationCodeFlow(
-  authenticationProps: AuthCodeAuthenticationProperties,
+/**
+ * Adds Authorization = 'Bearer access_token' to request headers if an access_token is present
+ * @requestHeaders An object containing the headers of the request to be sent
+ */
+export function signRequest(
+  requestHeaders: any,
+  storagePrefix: string = ''
+): any {
+  if (!requestHeaders) {
+    requestHeaders = {}
+  }
+  const token = accessToken(storagePrefix)
+  if (token) {
+    requestHeaders.Authorization = 'Bearer ' + token
+  }
+  return requestHeaders
+}
+
+/**
+ * Begins authorization by redirecting to the authorization endpoint of the authentication server
+ * @authenticationProps An object containing authentication properties
+ * @returnTo The path to go back to after authorization has been completed. If not set it will use the current path
+ */
+export function doAuthorizationCodeFlow(
+  authenticationProps: AuthCodeProps,
   returnTo: string | null = null,
   storagePrefix: string = '',
   isretry: boolean = false
@@ -73,7 +116,7 @@ export function doAuthorisationCodeFlow(
 }
 
 function getCodeLocation(
-  authenticationProps: AuthCodeAuthenticationProperties,
+  authenticationProps: AuthCodeProps,
   storagePrefix: string = ''
 ): string {
   const {
@@ -127,8 +170,12 @@ function getCodeLocation(
   return url
 }
 
+/**
+ * Begins logout by redirecting to the logout endpoint of the authentication server
+ * @authenticationProps An object containing authentication properties
+ */
 export function doLogoutFlow(
-  authenticationProps: AuthCodeAuthenticationProperties,
+  authenticationProps: AuthCodeProps,
   storagePrefix: string = ''
 ): void {
   cookies.remove(storagePrefix + 'access_token')
@@ -153,6 +200,9 @@ export function doLogoutFlow(
   )
 }
 
+/**
+ * Gets the full redirectUri from a path name
+ */
 export function buildRedirectUri(path: string): string {
   let pathMod = path
   if (!pathMod) {
@@ -198,7 +248,7 @@ export function getURIParameterByName(name: string, url: string) {
 }
 
 /**
- * Used to decode Jwt
+ * Decode Jwt to json string
  * @token id_token
  */
 export function parseJwt(token: string): string {

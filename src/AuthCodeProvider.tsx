@@ -4,9 +4,9 @@ import Cookies from 'universal-cookie'
 import axios from 'axios'
 import * as AuthCodeFunctions from './AuthCodeFunctions'
 // eslint-disable-next-line no-unused-vars
-import AuthCodeAuthenticationProperties from './AuthCodeAuthenticationProperties'
-import Loader from './Loader'
-import Message from './Message'
+import AuthCodeProps from './AuthCodeProps'
+import Loader from './AuthCodeLoader'
+import Message from './AuthCodeMessage'
 
 const cookies = new Cookies()
 const qs = require('querystring')
@@ -15,13 +15,12 @@ interface IAuthCodeProviderProps {
   children?: any
   authenticationRequired?: boolean
   doLogout?: boolean
-  authenticationProps: AuthCodeAuthenticationProperties
+  authenticationProps: AuthCodeProps
   returnTo?: string
   history: any
   storagePrefix: string
   onGetAuthCode?: () => void
   onRecieveAuthCode?: (authcode: string) => void
-  onGetAccessToken?: () => void
   onTokenObtained?: (data: any) => void
   onTokenObtainedError?: (error: Error) => void
   onTokenRefreshed?: (data: any) => void
@@ -62,23 +61,108 @@ class AuthCodeProvider extends React.Component<
   }
 
   static propTypes = {
-    // When true auth code flow is required so a token will be fetched. If false children will be rendered.
+    /**
+     * A prop used to toggle whether authentication is required.
+     * If false children will be rendered.
+     * If true, children will only be rendered when authenticated.
+     * Changing from false to true can be used to start the authentication flow.
+     */
     authenticationRequired: PropTypes.bool,
 
-    // Set to true to begin the logout flow
+    /**
+     * A prop used to begin the logout flow.
+     * Changing from false to true can be used to start the logout flow.
+     */
     doLogout: PropTypes.bool,
 
-    // Once a token has been retrieved this is the path to redirect back to. If not set it will redirect back to the original path
+    /**
+     * An instance of the AuthCodeAuthentication class. This contains properties needed to for the authentication flow.
+     */
+    authenticationProps: PropTypes.object.isRequired,
+
+    /**
+     * Once a token has been retrieved this is the path to redirect back to. If not set it will redirect back to the current path.
+     */
     returnTo: PropTypes.string,
 
-    // React router history object. If set this will be used for post authentication redirects and removing the code parameter
+    /**
+     * React router history object. If set this will be used for post authentication redirects and removing the code parameter.
+     * If not provided the page will be reloaded to remove the code parameter and redirect.
+     */
     history: PropTypes.any,
 
-    // Set to true to allow addiitonal logging to the console
+    /**
+     * Used if you are aythenticating with multiple oauth2 servers, you can store multiple access tokens.
+     * The second/third/etc instance should have a unique prefixes.
+     */
+    storagePrefix: PropTypes.string,
+
+    /**
+     * A call back function that is called before being redirecting to the authorization endpoint.
+     */
+    onGetAuthCode: PropTypes.func,
+
+    /**
+     * A call back function that is called when redirected back to the application with the Code parameter populated.
+     */
+    onRecieveAuthCode: PropTypes.func,
+
+    /**
+     * A call back function that is called after retrieving an access token.
+     */
+    onTokenObtained: PropTypes.func,
+
+    /**
+     * A call back function that is called if there is an error retrieving an access token.
+     */
+    onTokenObtainedError: PropTypes.func,
+
+    /**
+     * A call back function that is called after retrieving an access token from a refresh token in the background.
+     */
+    onTokenRefreshed: PropTypes.func,
+
+    /**
+     * A call back function that is called if there is an error retrieving access token from a refresh token in the background.
+     */
+    onTokenRefreshedError: PropTypes.func,
+
+    /**
+     * Set to true to allow addiitonal logging to the console
+     */
     enableDebugLog: PropTypes.bool,
 
-    // Used if you are aythenticating with multiple oauth2 servers, you can store multiple access tokens. The second/third/etc instance should have a unique prefixes
-    storagePrefix: PropTypes.string
+    /**
+     * The label 'Signing you in'
+     */
+    signInText: PropTypes.string,
+
+    /**
+     * The label 'Signing you out'
+     */
+    signOutText: PropTypes.string,
+
+    /**
+     * The label 'Sorry, we were unable to sign you in. Please try again later.'
+     */
+    signInErrorText: PropTypes.string,
+
+    /**
+     * The label 'Your session has expired.\nSign in again to continue.'
+     */
+    refreshErrorText: PropTypes.string,
+
+    /**
+     * You can use this prop to override the Loader with your own component.
+     * The component must support the props: text<string>.
+     */
+    loaderComponent: PropTypes.any,
+
+    /**
+     * You can use this prop to override the Sign in error message with your own component.
+     * The component must support the props: text<string>, btnText<string>, onBtnClick<function>.
+     */
+    signInErrorComponent: PropTypes.any
   }
 
   refreshTimer: any
@@ -116,6 +200,9 @@ class AuthCodeProvider extends React.Component<
     }
   }
 
+  /**
+   * Checks to see if any action is required to authenticate, and iniates it if neccessary.
+   */
   private processAuth(isRefresh: boolean): void {
     this.debugit('Authentication Required')
     let tokenExpired: boolean = false
@@ -174,6 +261,9 @@ class AuthCodeProvider extends React.Component<
     }
   }
 
+  /**
+   * Iniates the logout flow
+   */
   private doLogout(): void {
     AuthCodeFunctions.doLogoutFlow(
       this.props.authenticationProps,
@@ -181,12 +271,16 @@ class AuthCodeProvider extends React.Component<
     )
   }
 
+  /**
+   * Sets up redirect to the authorization endpoint
+   * @param isretry set to true if this is the second/third/nth attempt after an error with the first
+   */
   private getAuthCode(isretry: boolean = false): void {
     if (this.props.onGetAuthCode != null) {
       this.props.onGetAuthCode()
     }
     this.setState({ loading: true })
-    AuthCodeFunctions.doAuthorisationCodeFlow(
+    AuthCodeFunctions.doAuthorizationCodeFlow(
       this.props.authenticationProps,
       this.props.returnTo,
       this.props.storagePrefix,
@@ -194,6 +288,10 @@ class AuthCodeProvider extends React.Component<
     )
   }
 
+  /**
+   * Trade the Code in the uri for a token using by doing a post to the token endpoint
+   * @param code the code from the code query string parameter
+   */
   private tradeCodeForToken(code: string): void {
     const {
       tokenUrl,
@@ -284,6 +382,10 @@ class AuthCodeProvider extends React.Component<
       })
   }
 
+  /**
+   * Use the refresh token to obtain a new access token. Does a post to the token endpoints
+   * @param isRefresh if this is happening in the background (not initial fetch)
+   */
   private doRefreshFlow(isRefresh: boolean): void {
     const {
       tokenUrl,
@@ -358,6 +460,9 @@ class AuthCodeProvider extends React.Component<
       })
   }
 
+  /**
+   * If token expires mid session, or refresh fails mid session, this is called to get the user to take action to re-authorize.
+   */
   private sessionExpired(): void {
     var expiredresult = window.confirm(this.props.refreshErrorText)
     if (expiredresult) {
@@ -367,6 +472,11 @@ class AuthCodeProvider extends React.Component<
     }
   }
 
+  /**
+   * Handles token endpoint response and saves tokens
+   * @param response response from the token endpoint
+   * @param isrefresh if this is happening in the background (not initial fetch)
+   */
   private setTokens(response: any, isrefresh: boolean): void {
     // save id token in storage and check nonce
     const idToken = response.id_token
@@ -473,6 +583,10 @@ class AuthCodeProvider extends React.Component<
     }
   }
 
+  /**
+   * Does a set timeout to allow a refresh when the token expires
+   * @param expiryMilliSecs Milliseconds until token expiry minus 2 mins
+   */
   private setTokenRefresh(expiryMilliSecs: number) {
     // Set up refresh interval
     if (this.refreshTimer) {
@@ -485,6 +599,9 @@ class AuthCodeProvider extends React.Component<
     )
   }
 
+  /**
+   * Retry the authorization if it has failed
+   */
   private retryAuth(): void {
     cookies.remove(this.props.storagePrefix + 'access_token')
     cookies.remove(this.props.storagePrefix + 'refresh_token')
@@ -492,6 +609,10 @@ class AuthCodeProvider extends React.Component<
     this.getAuthCode(true)
   }
 
+  /**
+   * Log additional information
+   * @param line what to log
+   */
   private debugit(line: string): void {
     if (this.props.enableDebugLog) {
       console.log(line)

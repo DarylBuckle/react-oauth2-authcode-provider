@@ -5,15 +5,16 @@ import {
   Link,
   withRouter
 } from 'react-router-dom'
-import { AuthCodeProvider, AuthCodeFunctions, AuthCodeAuthenticationProperties } from 'react-oauth2-authcode-provider'
+import { AuthCodeProvider, AuthCodeFunctions, AuthCodeProps } from 'react-oauth2-authcode-provider'
 import 'react-oauth2-authcode-provider/dist/index.css'
+import FunctionsPage from './FunctionsPage'
 
 const App = (props: any) => {
-  const [authRequired, setAuthRequired] = useState(false);
-  const [, setTokenLoaded] = useState<any>(null);
-  const [doLogout, setDoLogout] = useState(false);
-  const loggedIn = AuthCodeFunctions.isLoggedIn()
-  const authProps: AuthCodeAuthenticationProperties = {
+  const [authRequired, setAuthRequired] = useState(false)
+  const [doLogout, setDoLogout] = useState(false)
+  const [, setTokenLoaded] = useState<any>(null) // This is being used to refresh the nav bar on sign in status change
+
+  const authProps: AuthCodeProps = {
     authUrl: 'https://dev-emf33n24.eu.auth0.com/authorize',
     callBackPath: '/callback',
     tokenUrl: 'https://dev-emf33n24.eu.auth0.com/oauth/token',
@@ -27,6 +28,7 @@ const App = (props: any) => {
     useNonce: true
   }
 
+  const loggedIn = AuthCodeFunctions.isLoggedIn()
   let username = ''
   const idToken = localStorage.getItem('id_token')
   if (idToken) {
@@ -50,28 +52,54 @@ const App = (props: any) => {
     </div>
 
   const pageinfo = 
-    <div className="mt-5 mb-5">
+    <div className='mt-4 mb-5'>
+      <hr className='mb-4' />
       <p>
         These examples use a example Auth0 authorization server.
       </p>
-      <p>
-        The <b>No Auth page</b> does not require you to be logged in to access.
-        You can initiate the OAuth2 Authorisation code flow by selecting the login button though.
-        <br/>
-        It uses the AuthCodeProvider component with authenticationRequired = the state of whether the loggin button has been pressed.
-      </p>
-      <p>
-        The <b>Auth Required page</b> requires you to be logged in to access.
-        Browsing too this page will initiate the OAuth2 Authorisation code flow if you are not already logged in.
-        You can also use this implentation to require authentication for the whole application.
-        <br/>
-        It uses the AuthCodeProvider component with authenticationRequired = true.
-      </p>
-      <p>
-        The <b>Functions page</b> has alternate methods to begin the Authorisation code or Logout flows.
-        These methods use Functions to intiate the flow instead of parsing props to AuthCodeProvider.
-        This is useful for starting the flows in deep nested components instead of passing variables up the stack.
-      </p>
+      <div className='row'>
+        <div className="col-lg-4">
+          <div className="card h-100 m-1">
+            <div className="card-body">
+              <p>
+                The <b>No Auth page</b> does not require you to be logged in to access.
+                You can initiate the OAuth2 Authorization code flow by selecting the login button though.
+              </p>
+              <p>
+                It uses the AuthCodeProvider component with authenticationRequired = the state of whether the loggin button has been pressed.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-4">
+          <div className="card h-100 m-1">
+            <div className="card-body">
+              <p>
+                The <b>Auth Required page</b> requires you to be logged in to access.
+                Browsing too this page will initiate the OAuth2 Authorization code flow if you are not already logged in.
+              </p>
+              <p>
+                It uses the AuthCodeProvider component with authenticationRequired = true.
+              </p>
+              <p>
+                You can also use this implentation to require authentication for the whole application.
+                To require authentication for the whole application, render a single instance of AuthCodeProvider in a top level component (E.g App).
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-4">
+          <div className="card h-100 m-1">
+            <div className="card-body">
+              <p>
+                The <b>Functions page</b> has alternate methods to begin the Authorization code or Logout flows.
+                These methods use Functions to intiate the flow instead of parsing props to AuthCodeProvider.
+                This is useful for starting the flows in deep nested components instead of passing variables up the stack.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   
   return (
@@ -90,28 +118,31 @@ const App = (props: any) => {
                         <Link className={props.location.pathname === '/authrequired' ? 'nav-link active' : 'nav-link'} to='/authrequired'>Auth Required</Link>
                     </li>
                     <li className='nav-item mr-lg-3'>
-                        <Link className={props.location.pathname === '/manual' ? 'nav-link active' : 'nav-link'} to='/functions'>Functions</Link>
+                        <Link className={props.location.pathname === '/functions' ? 'nav-link active' : 'nav-link'} to='/functions'>Functions</Link>
                     </li>
                 </ul>
 
-                <ul className='navbar-nav ml-auto mr-lg-5' data-toggle='collapse' data-target='.navbar-collapse.show'>
-                    { loggedIn ? 
-                    <li className='nav-item mr-lg-3'>
-                        <button className='nav-link btn btn-link' onClick={() => setDoLogout(true)}>Logout</button>
-                    </li>
-                    :
-                    <li className='nav-item mr-lg-3'>
-                        <button className='nav-link btn btn-link' onClick={() => setAuthRequired(true)}>Login</button>
-                    </li>
-                    }
-                </ul>
+                { props.location.pathname === '/functions' ? '' :
+                  <ul className='navbar-nav ml-auto mr-lg-5' data-toggle='collapse' data-target='.navbar-collapse.show'>
+                      { loggedIn ? 
+                      <li className='nav-item mr-lg-3'>
+                          <button className='nav-link btn btn-link' onClick={() => setDoLogout(true)}>Logout</button>
+                      </li>
+                      :
+                      <li className='nav-item mr-lg-3'>
+                          <button className='nav-link btn btn-link' onClick={() => setAuthRequired(true)}>Login</button>
+                      </li>
+                      }
+                  </ul>
+                }
             </div>
           </div>
       </nav>
       <div className='ml-lg-5 ml-3 mr-lg-5 mr-3' style={{marginTop: '100px'}}>
-          <h1 className='mb-3'>react-oauth2-authcode-provider examples</h1>
+          <h1 className='mb-3'>react oauth2 authcode provider examples</h1>
           <Switch>
             <Route exact path='/'>
+
               <AuthCodeProvider
                 authenticationProps={authProps}
                 history={props.history}
@@ -121,14 +152,17 @@ const App = (props: any) => {
                 onTokenObtained={(data) => setTokenLoaded(data)}
                 onTokenObtainedError={(error) => { setTokenLoaded(error)}}
               >
+                <h3>No Auth</h3>
                 <span style={{fontStyle: 'italic'}}>
                   This page does not require you to be logged in, but you can log in with the login button on the nav bar.
                 </span>
                 {loginstatus}
                 {pageinfo}
               </AuthCodeProvider>
+
             </Route>
             <Route exact path='/functions'>
+
               <AuthCodeProvider
                 authenticationProps={authProps}
                 history={props.history}
@@ -137,18 +171,18 @@ const App = (props: any) => {
                 onTokenObtained={(data) => setTokenLoaded(data)}
                 onTokenObtainedError={(error) => { setTokenLoaded(error)}}
               >
+                <h3>Functions</h3>
                 <span style={{fontStyle: 'italic'}}>
-                  This page has functions to manually initiate the Authorisation code flow or logout flow using functions.
+                  This page has functions to manually initiate the Authorization code flow or logout flow using functions.
                 </span>
                 {loginstatus}
-                <div className='mt-3 mb-3'>
-                  <button className='btn btn-primary mr-3' onClick={() => AuthCodeFunctions.doAuthorisationCodeFlow(authProps)}>Start Authorisation Code Flow</button>
-                  <button className='btn btn-primary mr-3' onClick={() => AuthCodeFunctions.doLogoutFlow(authProps)}>Start Log out Flow</button>
-                </div>
+                <FunctionsPage authProps={authProps} />
                 {pageinfo}
               </AuthCodeProvider>
+
             </Route>
             <Route exact path='*'>
+
               <AuthCodeProvider
                 authenticationProps={authProps}
                 history={props.history}
@@ -160,6 +194,7 @@ const App = (props: any) => {
               >
                 <Switch>
                   <Route path='/authrequired'>
+                    <h3>Auth Required</h3>
                     <span style={{fontStyle: 'italic'}}>
                       This page requires you to be logged in. It's content only shows when you are logged in.
                     </span>
@@ -171,6 +206,7 @@ const App = (props: any) => {
                   </Route>
                 </Switch>
               </AuthCodeProvider>
+              
             </Route>
           </Switch>
       </div>

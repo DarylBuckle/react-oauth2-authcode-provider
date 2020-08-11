@@ -1,5 +1,5 @@
 import AuthCodeProvider from './AuthCodeProvider'
 import * as AuthCodeFunctions from './AuthCodeFunctions'
-import AuthCodeAuthenticationProperties from './AuthCodeAuthenticationProperties'
+import AuthCodeProps from './AuthCodeProps'
 
-export { AuthCodeProvider, AuthCodeFunctions, AuthCodeAuthenticationProperties }
+export { AuthCodeProvider, AuthCodeFunctions, AuthCodeProps }
