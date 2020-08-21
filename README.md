@@ -21,7 +21,7 @@
 
 Wrap a single page react application with the AuthCodeProvider component to easily handle authentication with an OAuth2 server using Authorization Code flow for all pages, using just a few lines of code.
 
-AuthCodeProvider can also be added to indivual pages or react components to only require authentication for particular areas of an application.
+AuthCodeProvider can also be added to individual pages or react components to only require authentication for particular areas of an application.
 
 A set of functions included in AuthCodeFunctions can also be used to initiate flows, get tokens, or sign requests.
 
@@ -34,7 +34,7 @@ Also includes Refresh token flow, and token management and logout flow.
 npm install --save react-oauth2-authcode-provider
 ```
 
-Peer Dependancies;
+Peer Dependencies;
 * React v16 +
 * [Axios](https://github.com/axios/axios) v0.19 +
 
@@ -85,14 +85,14 @@ Or view the online example at [https://darylbuckle.github.io/react-oauth2-authco
 |    doLogout | bool  | false  | false | A prop used to begin the logout flow. Changing from false to true can be used to start the logout flow. |
 |    returnTo | string  | *current path*  | false | Once a token has been retrieved this is the path to redirect back to. If not set it will redirect back to the current path. |
 |    history | ReactRouterHistory  |  | false | React router history object. If set this will be used for post authentication redirects and removing the code parameter. If not provided the page will be reloaded to remove the code parameter and redirect. |
-|    storagePrefix | string  | ''  | false | Used if you are aythenticating with multiple oauth2 servers, you can store multiple access tokens. The second/third/etc instance should have a unique prefixes. |
+|    storagePrefix | string  | ''  | false | Used if you are authenticating with multiple oauth2 servers, you can store multiple access tokens. The second/third/etc instance should have a unique prefixes. |
 |    onGetAuthCode | func  |  | false | A call back function that is called before being redirecting to the authorization endpoint. |
-|    onRecieveAuthCode | func  |  | false | A call back function that is called when redirected back to the application with the Code parameter populated. |
+|    onReceiveAuthCode | func  |  | false | A call back function that is called when redirected back to the application with the Code parameter populated. |
 |    onTokenObtained | func  |  | false | A call back function that is called after retrieving an access token. |
 |    onTokenObtainedError | func  |  | false | A call back function that is called if there is an error retrieving an access token. |
 |    onTokenRefreshed | func  |  | false | A call back function that is called after retrieving an access token from a refresh token in the background. |
 |    onTokenRefreshedError | func  |  | false | A call back function that is called if there is an error retrieving access token from a refresh token in the background. |
-|    enableDebugLog | bool  | false  | false | Set to true to allow addiitonal logging to the console. |
+|    enableDebugLog | bool  | false  | false | Set to true to allow additional logging to the console. |
 |    signInText | string  | 'Signing you in'  | false | The label 'Signing you in'  |
 |    signInText | string  | 'Signing you out'  | false | The label 'Signing you out' |
 |    signInText | string  | 'Sorry, we were unable to sign you in. Please try again later.'  | false | The label 'Sorry, we were unable to sign you in. Please try again later.' |

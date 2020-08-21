@@ -1,10 +1,21 @@
 {
   "name": "react-oauth2-authcode-provider",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A component that can wrap react single page applications to implement authentication with OAuth2 Authorization Code Flow.",
   "author": "DarylBuckle",
   "license": "MIT",
-  "repository": "DarylBuckle/react-oauth2-authcode-provider",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarylBuckle/react-oauth2-authcode-provider"
+  },
+  "keywords": [
+    "react",
+    "oauth",
+    "oauth2",
+    "authorization",
+    "authorization code"
+  ],
+  "homepage": "https://github.com/darylbuckle/react-oauth2-authcode-provider",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",

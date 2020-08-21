@@ -20,7 +20,7 @@ interface IAuthCodeProviderProps {
   history: any
   storagePrefix: string
   onGetAuthCode?: () => void
-  onRecieveAuthCode?: (authcode: string) => void
+  onReceiveAuthCode?: (authcode: string) => void
   onTokenObtained?: (data: any) => void
   onTokenObtainedError?: (error: Error) => void
   onTokenRefreshed?: (data: any) => void
@@ -105,7 +105,7 @@ class AuthCodeProvider extends React.Component<
     /**
      * A call back function that is called when redirected back to the application with the Code parameter populated.
      */
-    onRecieveAuthCode: PropTypes.func,
+    onReceiveAuthCode: PropTypes.func,
 
     /**
      * A call back function that is called after retrieving an access token.
@@ -246,8 +246,8 @@ class AuthCodeProvider extends React.Component<
       if (code) {
         // We have an authentication code, trade for token
         this.debugit('Authentication code detected. Fetching token')
-        if (this.props.onRecieveAuthCode != null) {
-          this.props.onRecieveAuthCode(code)
+        if (this.props.onReceiveAuthCode != null) {
+          this.props.onReceiveAuthCode(code)
         }
         this.tradeCodeForToken(code)
       } else if (this.props.authenticationRequired) {

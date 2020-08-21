@@ -66,7 +66,7 @@ const App = (props: any) => {
                 You can initiate the OAuth2 Authorization code flow by selecting the login button though.
               </p>
               <p>
-                It uses the AuthCodeProvider component with authenticationRequired = the state of whether the loggin button has been pressed.
+                It uses the AuthCodeProvider component with authenticationRequired = the state of whether the log in button has been pressed.
               </p>
             </div>
           </div>
@@ -82,7 +82,7 @@ const App = (props: any) => {
                 It uses the AuthCodeProvider component with authenticationRequired = true.
               </p>
               <p>
-                You can also use this implentation to require authentication for the whole application.
+                You can also use this implementation to require authentication for the whole application.
                 To require authentication for the whole application, render a single instance of AuthCodeProvider in a top level component (E.g App).
               </p>
             </div>
@@ -93,7 +93,7 @@ const App = (props: any) => {
             <div className="card-body">
               <p>
                 The <b>Functions page</b> has alternate methods to begin the Authorization code or Logout flows.
-                These methods use Functions to intiate the flow instead of parsing props to AuthCodeProvider.
+                These methods use Functions to initiate the flow instead of parsing props to AuthCodeProvider.
                 This is useful for starting the flows in deep nested components instead of passing variables up the stack.
               </p>
             </div>
