@@ -19,6 +19,7 @@ interface IAuthCodeProviderProps {
   returnTo?: string
   history: any
   storagePrefix: string
+  cookiePath: string
   onGetAuthCode?: () => void
   onReceiveAuthCode?: (authcode: string) => void
   onTokenObtained?: (data: any) => void
@@ -52,6 +53,7 @@ class AuthCodeProvider extends React.Component<
     authenticationRequired: true,
     doLogout: false,
     storagePrefix: '',
+    cookiePath: '/',
     enableDebugLog: false,
     signInText: 'Signing you in...',
     signOutText: 'Signing you out...',
@@ -96,6 +98,11 @@ class AuthCodeProvider extends React.Component<
      * The second/third/etc instance should have a unique prefixes.
      */
     storagePrefix: PropTypes.string,
+
+    /**
+     * Determines the Path for cookies. If hosting in a subdirectory you should set this to the subdirectory path (/subdriectory)
+     */
+    cookiePath: PropTypes.string,
 
     /**
      * A call back function that is called before being redirecting to the authorization endpoint.
@@ -525,7 +532,7 @@ class AuthCodeProvider extends React.Component<
     cookies.set(
       this.props.storagePrefix + 'access_token',
       response.access_token,
-      { path: '/' }
+      { path: this.props.cookiePath }
     )
     this.debugit('New Access Token: ' + response.access_token)
 
@@ -536,7 +543,7 @@ class AuthCodeProvider extends React.Component<
     }
     if (refreshToken) {
       cookies.set(this.props.storagePrefix + 'refresh_token', refreshToken, {
-        path: '/',
+        path: this.props.cookiePath,
         expires: new Date(now.setMonth(now.getMonth() + 4))
       })
       this.debugit('New Refresh Token: ' + response.access_token)

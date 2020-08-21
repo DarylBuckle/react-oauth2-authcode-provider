@@ -96,7 +96,6 @@ export function doAuthorizationCodeFlow(
   cookies.remove(storagePrefix + 'access_token')
   cookies.remove(storagePrefix + 'refresh_token')
   localStorage.removeItem(storagePrefix + 'id_token')
-
   if (
     !isretry ||
     !localStorage.getItem(storagePrefix + 'authcode_authentication_redirect')
@@ -208,7 +207,14 @@ export function buildRedirectUri(path: string): string {
   if (!pathMod) {
     pathMod = ''
   }
-  return location.protocol + '//' + location.host + pathMod
+  if (
+    pathMod.toUpperCase().includes('HTTP://') ||
+    pathMod.toUpperCase().includes('HTTPS://')
+  ) {
+    return pathMod
+  } else {
+    return location.protocol + '//' + location.host + pathMod
+  }
 }
 
 /**

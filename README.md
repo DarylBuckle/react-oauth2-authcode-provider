@@ -67,11 +67,14 @@ class Example extends Component {
 }
 ```
 
-See the [Example](./example) for an application of this component. This showcases a few different use cases, and you can see this in action whilst hooked up to a test Auth0 server.
+See the [Examples](./example) for an application of this component. This showcases a few different use cases all in one single page application, and you can see this in action whilst hooked up to a test Auth0 server.
 
-Build the Example with `npm install` and then `npm start` to start the development server at [http://localhost:3000](http://localhost:3000).
+Build the Examples with `npm install` and then `npm start` to start the development server at [http://localhost:3000](http://localhost:3000).
 
 Or view the online example at [https://darylbuckle.github.io/react-oauth2-authcode-provider](https://darylbuckle.github.io/react-oauth2-authcode-provider).
+
+A simple example that always requires authentication can also be found at [https://github.com/darylbuckle/react-oauth2-authcode-provider-test](https://github.com/darylbuckle/react-oauth2-authcode-provider-test).
+
 
 
 ## Props
@@ -86,6 +89,7 @@ Or view the online example at [https://darylbuckle.github.io/react-oauth2-authco
 |    returnTo | string  | *current path*  | false | Once a token has been retrieved this is the path to redirect back to. If not set it will redirect back to the current path. |
 |    history | ReactRouterHistory  |  | false | React router history object. If set this will be used for post authentication redirects and removing the code parameter. If not provided the page will be reloaded to remove the code parameter and redirect. |
 |    storagePrefix | string  | ''  | false | Used if you are authenticating with multiple oauth2 servers, you can store multiple access tokens. The second/third/etc instance should have a unique prefixes. |
+|    cookiePath | string  | '/'  | false | Determines the Path for cookies. If hosting in a subdirectory you should set this to the subdirectory path (/subdriectory). |
 |    onGetAuthCode | func  |  | false | A call back function that is called before being redirecting to the authorization endpoint. |
 |    onReceiveAuthCode | func  |  | false | A call back function that is called when redirected back to the application with the Code parameter populated. |
 |    onTokenObtained | func  |  | false | A call back function that is called after retrieving an access token. |

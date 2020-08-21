@@ -1,6 +1,6 @@
 {
   "name": "react-oauth2-authcode-provider",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A component that can wrap react single page applications to implement authentication with OAuth2 Authorization Code Flow.",
   "author": "DarylBuckle",
   "license": "MIT",
