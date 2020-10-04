@@ -45,7 +45,7 @@ Minimum required;
 ```tsx
 import React, { Component } from 'react'
 
-import AuthCodeProvider from 'react-oauth2-authcode-provider'
+import { AuthCodeProvider } from 'react-oauth2-authcode-provider'
 import 'react-oauth2-authcode-provider/dist/index.css'
 
 class Example extends Component {
