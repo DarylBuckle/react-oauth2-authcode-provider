@@ -110,7 +110,7 @@ export function doAuthorizationCodeFlow(
       postAuthenticationRedirect
     )
   }
-  const codeLocation = getCodeLocation(authenticationProps)
+  const codeLocation = getCodeLocation(authenticationProps, storagePrefix)
   window.location.replace(codeLocation)
 }
 
